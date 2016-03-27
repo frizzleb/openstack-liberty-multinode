@@ -7,7 +7,7 @@ sleep 3
 echo "controller" > /etc/hostname
 hostname -F /etc/hostname
 
-echo "Configuring for file /etc/hosts"
+echo "Configuring file /etc/hosts"
 sleep 3
 iphost=/etc/hosts
 test -f $iphost.orig || cp $iphost $iphost.orig
@@ -26,25 +26,25 @@ echo "net.ipv4.conf.all.rp_filter=0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.rp_filter=0" >> /etc/sysctl.conf
 sysctl -p
 
-echo "##### Cai dat repos cho Liberty ##### "
+echo "##### Add Openstack Liberty Repo ##### "
 apt-get install software-properties-common -y
 add-apt-repository cloud-archive:liberty -y
 
 sleep 5
-echo "UPDATE PACKAGE FOR LIBERTY"
+echo "Update the system"
 apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
 
 
 echo "########## Install and Config OpenvSwitch ##########"
 apt-get install -y openvswitch-switch
 
-echo "########## Cau hinh br-int va br-ex cho OpenvSwitch ##########"
+echo "########## Setup external network bridge ##########"
 sleep 5
 ovs-vsctl add-br br-ex
-ovs-vsctl add-port br-ex eth1
+ovs-vsctl add-port br-ex eth0
 
 
-echo "########## Cau hinh dia chi IP cho br-ex ##########"
+echo "########## Configure br-ex in the interfaces file ##########"
 ifaces=/etc/network/interfaces
 test -f $ifaces.orig1 || cp $ifaces $ifaces.orig1
 rm $ifaces
@@ -55,27 +55,30 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-address $LOCAL_IP
-netmask $NETMASK_LOCAL
+address $PUBLIC_IP
+netmask $PUBLIC_NETMASK
+network $PUBLIC_NETWORK
+broadcast $PUBLIC_BROADCAST
+gateway $PUBLIC_GATEWAY
+up ifconfig eth1 promisc up
+down ifconfig eth1 promisc down
 
 # The primary network interface
 auto br-ex
 iface br-ex inet static
-address $MASTER
-netmask $NETMASK_MASTER
-gateway $GATEWAY_IP
+address $PUBLIC_IP
+hwaddress ether $PUBLIC_MAC
+netmask $PUBLIC_NETMASK
 dns-nameservers 8.8.8.8
 
 auto eth1
-iface eth1 inet manual
- up ifconfig \$IFACE 0.0.0.0 up
- up ip link set \$IFACE promisc on
- down ip link set \$IFACE promisc off
- down ifconfig \$IFACE down
-EOF
+iface eth1 inet static
+address $PRIVATE_IP
+netmask $PRIVATE_NETMAST
+broadcast $PRIVATE_BROADCAST
 
 sleep 5
-echo "Reboot Server"
+echo "Rebooting Server"
 
 #sleep 5
 init 6
