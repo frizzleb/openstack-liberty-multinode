@@ -36,7 +36,7 @@ apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
 
 
 echo "########## Install and Config OpenvSwitch ##########"
-apt-get install -y openvswitch-switchd
+apt-get install openvswitch-switch
 
 echo "########## Setup external network bridge ##########"
 sleep 5
