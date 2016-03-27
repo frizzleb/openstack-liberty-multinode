@@ -26,9 +26,9 @@ echo "net.ipv4.conf.all.rp_filter=0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.rp_filter=0" >> /etc/sysctl.conf
 sysctl -p
 
-echo "##### Add Openstack Liberty Repo ##### "
-apt-get install software-properties-common -y
-add-apt-repository cloud-archive:liberty -y
+#echo "##### Add Openstack Liberty Repo ##### "
+#apt-get install software-properties-common -y
+#add-apt-repository cloud-archive:liberty -y
 
 sleep 5
 echo "Update the system"
