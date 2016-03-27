@@ -36,7 +36,7 @@ apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
 
 
 echo "########## Install and Config OpenvSwitch ##########"
-apt-get install -y openvswitch-switch
+apt-get install -y openvswitch-switchd
 
 echo "########## Setup external network bridge ##########"
 sleep 5
@@ -76,6 +76,7 @@ iface eth1 inet static
 address $PRIVATE_IP
 netmask $PRIVATE_NETMAST
 broadcast $PRIVATE_BROADCAST
+EOF
 
 sleep 5
 echo "Rebooting Server"
